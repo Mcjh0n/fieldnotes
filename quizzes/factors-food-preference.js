@@ -1,6 +1,6 @@
 const M=(question,choices,answer,explanation,source)=>({type:'mcq',question,choices,answer,explanation,source});
 const I=(question,answerText,explanation,source,acceptedAnswers=[])=>({type:'identification',question,answerText,acceptedAnswers:[answerText,...acceptedAnswers],explanation,source});
-const T=(question,answer,explanation,source)=>({type:'tf',question,choices:['True','False'],answer,explanation,source});
+const T=(question,answer,explanation,source)=>({type:'tf',question,choices:['True','False'],answer:answer?0:1,explanation,source});
 const E=(question,keyPoints,source)=>({type:'essay',question,keyPoints,source});
 window.QUIZ_DATA={title:'Factors Affecting Food Preference',sections:[
 {id:'mcq',title:'Multiple Choice',type:'mcq',items:[
