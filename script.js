@@ -1,5 +1,8 @@
 /* Add future quiz cards here. Quiz pages use the same quiz engine and data shape. */
 const QUIZZES = [
+  {title:'Nonthermal Processing',topic:'Food Processing I · Unit V',difficulty:'Lecture review',description:'Review nonthermal technologies, mechanisms, applications, operating factors, advantages, and limitations.',questions:65,url:'quizzes/nonthermal-processing.html',icon:'ϟ'},
+  {title:'Macronutrients',topic:'Nutrition · Macronutrients',difficulty:'Lecture review',description:'Practice carbohydrates, fiber, fats, proteins, energy values, energy expenditure, and nutrition-related conditions.',questions:65,url:'quizzes/macronutrients.html',icon:'◍'},
+  {title:'The Milling Process',topic:'Cereal Science · Unit V',difficulty:'Lecture review',description:'Explore dry and wet milling, grain fractionation, rice and wheat processing, flour grades, and flour quality.',questions:65,url:'quizzes/milling-process.html',icon:'◒'},
   {title:'Qualitative Tools in Nutrition',topic:'Chapter 2 · Unit 1',difficulty:'Lecture review',description:'Review nutrition guides, Pinggang Pinoy, development principles, food groups, and the lecture’s NGF messages.',questions:45,url:'quizzes/qualitative-tools-nutrition.html',icon:'◉'},
   {title:'Food Label',topic:'Chapter 2 · Unit 3',difficulty:'Lecture review',description:'Practice label regulations, required information, Nutrition Facts, date marks, and claim categories.',questions:45,url:'quizzes/food-label.html',icon:'▤'},
   {title:'Factors Affecting Food Preference',topic:'Food preference and diet',difficulty:'Lecture review',description:'Test distinctions among preference, choice, appetite, satiety, taste, culture, and food environment.',questions:45,url:'quizzes/factors-food-preference.html',icon:'◌'},
