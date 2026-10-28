@@ -13,7 +13,10 @@ body{font-size:16px;-webkit-font-smoothing:auto}
 .quiz-card h3{font-size:22px}
 .progress-percent{font-size:13px}
 .question-card h1{font-size:clamp(21px,2.7vw,27px)}
-.new-badge{font-size:12px;font-weight:700;letter-spacing:.3px;color:#225b3e;background:#e3f2e6;border:1px solid #cbe4d1;border-radius:30px;padding:7px 11px}
+.new-quiz-card{border:2px solid #79a983;background:linear-gradient(145deg,#fff 68%,#f1f8f2);box-shadow:0 5px 20px #386d4a1c}
+.new-quiz-card:hover{border-color:#4f865b;box-shadow:0 10px 26px #386d4a2b}
+.new-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.25px;color:#fff;background:linear-gradient(135deg,#49865b,#2f6d48);border:1px solid #2b6543;border-radius:30px;padding:8px 12px;box-shadow:0 3px 9px #326b4540}
+.new-badge span{font-size:13px;line-height:1}
 .question-context{font-size:15px}
 .choice{font-size:16px;min-height:60px}
 .choice-letter{font-size:13px}
