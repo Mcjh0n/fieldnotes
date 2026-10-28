@@ -13,6 +13,7 @@ body{font-size:16px;-webkit-font-smoothing:auto}
 .quiz-card h3{font-size:22px}
 .progress-percent{font-size:13px}
 .question-card h1{font-size:clamp(21px,2.7vw,27px)}
+.new-badge{font-size:12px;font-weight:700;letter-spacing:.3px;color:#225b3e;background:#e3f2e6;border:1px solid #cbe4d1;border-radius:30px;padding:7px 11px}
 .question-context{font-size:15px}
 .choice{font-size:16px;min-height:60px}
 .choice-letter{font-size:13px}
