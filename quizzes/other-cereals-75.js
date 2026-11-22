@@ -34,4 +34,4 @@ cerealFacts.forEach((f,i)=>{
   qs.push({type:'mcq',question:`Identify the term or product that matches this lecture clue: ${f[3]}`,choices:options,answer:0,explanation:f[3],source:f[4],section:'Identify from a clue'});
 });
 qs.forEach((q,i)=>{const shift=(i*3+1)%q.choices.length;q.choices=q.choices.slice(shift).concat(q.choices.slice(0,shift));q.answer=(q.answer-shift+q.choices.length)%q.choices.length});
-window.QUIZ_DATA={title:'Other Cereal Products · 75 MCQ',topic:'Cereal Science and Technology',sections:[{id:'mcq',title:'Multiple Choice',type:'mcq',items:qs}]};
+window.QUIZ_DATA={title:'Other Cereal Products · 75 MCQ',topic:'Cereal Science and Technology · Other Cereal Products',sections:[{id:'mcq',title:'Multiple Choice',type:'mcq',items:qs}]};window.QUIZ_DATA.mixStyles=true;

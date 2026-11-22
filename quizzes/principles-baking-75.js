@@ -36,4 +36,4 @@ facts.forEach((f,i)=>{
   questions.push({type:'mcq',question:`Which baking concept is identified by this clue? ${f[5]}`,choices:opts,answer:0,explanation:f[5],source:f[6],section:'Identify from a clue'});
 });
 questions.forEach((q,i)=>{const shift=(i*3+1)%q.choices.length;q.choices=q.choices.slice(shift).concat(q.choices.slice(0,shift));q.answer=(q.answer-shift+q.choices.length)%q.choices.length});
-window.QUIZ_DATA={title:'Principles of Baking · 75 MCQ',topic:'Cereal Science and Technology',sections:[{id:'mcq',title:'Multiple Choice',type:'mcq',items:questions} ]};
+window.QUIZ_DATA={title:'Principles of Baking · 75 MCQ',topic:'Cereal Science and Technology',sections:[{id:'mcq',title:'Multiple Choice',type:'mcq',items:questions} ]};window.QUIZ_DATA.mixStyles=true;
