@@ -74,3 +74,63 @@ if(!window.QUIZ_DATA?.sections)initQuiz();
   function renderNGF(){const done=ngfAnswers.filter(x=>x.trim()).length,pct=Math.round(done/ngfAnswers.length*100);root.innerHTML=`${header()}<section class="ngf-wrap"><div class="ngf-intro"><p class="eyebrow">SECTION E · RECALL PRACTICE</p><h1>Nutritional Guidelines for Filipinos</h1><p>Type all ten guidelines from memory. The answers stay hidden until you check your work.</p><div class="progress-row"><div class="progress-track"><div class="progress-fill" style="width:${ngfChecked?100:pct}%"></div></div><span class="progress-percent">${ngfChecked?data.guidelines.length:done} / ${data.guidelines.length}</span></div></div><div class="ngf-fields">${data.guidelines.map((g,i)=>`<div class="ngf-field"><label for="ngf-${i}"><span>${i+1}</span> Guideline ${i+1}</label><textarea id="ngf-${i}" class="ngf-answer" rows="2" ${ngfChecked?'disabled':''} placeholder="Recall guideline ${i+1}…">${esc(ngfAnswers[i])}</textarea>${ngfChecked?`<div class="ngf-result ${norm(g)===norm(ngfAnswers[i])?'good':'bad'}"><strong>${norm(g)===norm(ngfAnswers[i])?'✓ Correct':'✕ Needs review'}</strong>${norm(g)!==norm(ngfAnswers[i])?`<p><b>Your answer:</b> ${esc(ngfAnswers[i]||'No answer')}</p><p><b>Correct guideline:</b> ${esc(g)}</p>`:''}</div>`:''}</div>`).join('')}</div>${ngfChecked?`<div class="ngf-score"><strong>${ngfScore()} / ${data.guidelines.length} Guidelines Correct</strong><span>${ngfScore()===data.guidelines.length?'Great recall.':`Review the remaining ${data.guidelines.length-ngfScore()} guideline${data.guidelines.length-ngfScore()===1?'':'s'}.`}</span></div>`:''}<div class="ngf-actions"><button class="secondary-btn" id="back-quiz">← Back to quiz</button>${ngfChecked?`<button class="secondary-btn" id="retry-ngf">Try again</button>`:`<button class="primary-btn" id="check-ngf">Check my answers →</button>`}</div></section>`;root.querySelectorAll('.ngf-answer').forEach((f,i)=>f.addEventListener('input',()=>{ngfAnswers[i]=f.value;const count=ngfAnswers.filter(x=>x.trim()).length;$('.progress-fill',root).style.width=Math.round(count/ngfAnswers.length*100)+'%';$('.progress-percent',root).textContent=`${count} / ${ngfAnswers.length}`}));$('#back-quiz',root).onclick=()=>{showingNGF=false;render()};if($('#check-ngf',root))$('#check-ngf',root).onclick=()=>{ngfChecked=true;showingNGF=true;render()};if($('#retry-ngf',root))$('#retry-ngf',root).onclick=()=>{ngfAnswers=Array(data.guidelines.length).fill('');ngfChecked=false;render()}}
   render();
 })();
+
+/* Site-wide accessibility controls shared by the homepage and every quiz page. */
+(() => {
+  if(document.querySelector('.a11y-tools'))return;
+  const KEY='marielleStudyAccessibility';
+  const defaults={textSize:'default',contrast:false,motion:false,underline:false,darkMode:false};
+  let prefs={...defaults};
+  try{prefs={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{}
+  const tools=document.createElement('div');tools.className='a11y-tools';
+  const accessIcon='<svg class="a11y-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="4.3" r="1.8" fill="currentColor"/><path d="M4 8.5h16M12 7v7m0 0-5.2 6M12 14l5.2 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  tools.innerHTML=`<button class="a11y-more" type="button" aria-label="Show quick settings" aria-expanded="false" aria-controls="a11y-mobile-menu">•••</button><div class="a11y-mobile-menu" id="a11y-mobile-menu" hidden><button class="a11y-mobile-launcher" type="button" aria-label="Open accessibility settings" title="Accessibility settings" aria-expanded="false" aria-controls="a11y-panel">${accessIcon}</button><button class="a11y-mobile-dark" type="button" aria-pressed="false">☾ Dark mode</button></div><button class="a11y-launcher" type="button" aria-label="Open accessibility settings" title="Accessibility settings" aria-expanded="false" aria-controls="a11y-panel">${accessIcon}</button><section class="a11y-panel" id="a11y-panel" role="dialog" aria-modal="false" aria-labelledby="a11y-title" hidden><header class="a11y-panel-head"><div><h2 id="a11y-title">Accessibility</h2><p>Adjust this page for easier reading.</p></div><button class="a11y-close" type="button" aria-label="Close accessibility settings">×</button></header><fieldset class="a11y-size"><legend>Text size</legend><p>Choose a comfortable reading size.</p><div class="a11y-size-options"><button type="button" role="radio" aria-label="Default text size" aria-checked="true" data-size="default">A</button><button type="button" role="radio" aria-label="Larger text" aria-checked="false" data-size="large">A+</button><button type="button" role="radio" aria-label="Extra-large text" aria-checked="false" data-size="xlarge">A++</button></div></fieldset><label class="a11y-toggle"><span class="a11y-toggle-copy"><strong>High contrast</strong><small>Strengthen text and surface contrast.</small></span><input type="checkbox" name="contrast"></label><label class="a11y-toggle"><span class="a11y-toggle-copy"><strong>Reduce motion</strong><small>Limit animation and transition effects.</small></span><input type="checkbox" name="motion"></label><label class="a11y-toggle"><span class="a11y-toggle-copy"><strong>Underline links</strong><small>Make clickable text easier to spot.</small></span><input type="checkbox" name="underline"></label><button class="a11y-reset" type="button">Reset to default</button></section>`;
+  const dark=document.createElement('button');dark.className='a11y-dark-toggle';dark.type='button';dark.setAttribute('aria-pressed','false');dark.setAttribute('aria-label','Toggle dark mode');
+  document.body.append(tools);
+  const panel=tools.querySelector('.a11y-panel'),desktop=tools.querySelector('.a11y-launcher'),mobileMenu=tools.querySelector('.a11y-mobile-menu'),mobile=tools.querySelector('.a11y-mobile-launcher'),mobileDark=tools.querySelector('.a11y-mobile-dark'),more=tools.querySelector('.a11y-more'),close=tools.querySelector('.a11y-close');
+  function ensureDarkToggle(){const header=document.querySelector('.topbar,.quiz-header');if(!header)return;const anchor=header.classList.contains('quiz-header')?header.querySelector('.back-link'):header.querySelector('.brand');if(anchor&&dark.parentElement!==header)anchor.insertAdjacentElement('afterend',dark)}
+  function save(){localStorage.setItem(KEY,JSON.stringify(prefs))}
+  function apply(){
+    const root=document.documentElement;
+    root.dataset.textSize=prefs.textSize;
+    root.classList.toggle('a11y-high-contrast',!!prefs.contrast);
+    root.classList.toggle('a11y-reduce-motion',!!prefs.motion);
+    root.classList.toggle('a11y-underline-links',!!prefs.underline);
+    root.classList.toggle('a11y-dark-mode',!!prefs.darkMode);
+    tools.querySelectorAll('[data-size]').forEach(x=>x.setAttribute('aria-checked',String(x.dataset.size===prefs.textSize)));
+    tools.querySelector('[name="contrast"]').checked=!!prefs.contrast;
+    tools.querySelector('[name="motion"]').checked=!!prefs.motion;
+    tools.querySelector('[name="underline"]').checked=!!prefs.underline;
+    [dark,mobileDark].forEach(b=>{b.setAttribute('aria-pressed',String(!!prefs.darkMode));b.textContent=prefs.darkMode?'☀ Light mode':'☾ Dark mode'});
+    resizeText();
+  }
+  const textTags='P,H1,H2,H3,H4,H5,H6,A,BUTTON,LABEL,LEGEND,LI,SPAN,STRONG,EM,SMALL,DT,DD,TH,TD,CODE,PRE,BLOCKQUOTE,CAPTION';
+  function resizeText(scope=document){
+    const scale=prefs.textSize==='large'?1.15:prefs.textSize==='xlarge'?1.3:1;
+    const textSelector=textTags.split(',').map(t=>t.toLowerCase()).join(',');
+    const textNodes=[...(scope.matches?.(textSelector)?[scope]:[]),...(scope.querySelectorAll?.(textSelector)||[])];
+    textNodes.forEach(el=>{
+      if(!el.dataset.a11yBaseFont)el.dataset.a11yBaseFont=getComputedStyle(el).fontSize;
+      const base=parseFloat(el.dataset.a11yBaseFont);
+      if(Number.isFinite(base))el.style.fontSize=`${base*scale}px`;
+    });
+    if(scope===document)document.querySelectorAll('input,textarea,select').forEach(el=>{if(!el.dataset.a11yBaseFont)el.dataset.a11yBaseFont=getComputedStyle(el).fontSize;const base=parseFloat(el.dataset.a11yBaseFont);if(Number.isFinite(base))el.style.fontSize=`${base*scale}px`});
+  }
+  const observer=new MutationObserver(records=>{ensureDarkToggle();records.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1)resizeText(n)}))});
+  observer.observe(document.body,{childList:true,subtree:true});
+  ensureDarkToggle();
+  function revealLauncher(){mobileMenu.hidden=false;more.setAttribute('aria-expanded','true');mobile.focus()}
+  function hideLauncher(){mobileMenu.hidden=true;more.setAttribute('aria-expanded','false')}
+  function openPanel(e){panel.hidden=false;tools.querySelectorAll('[aria-controls="a11y-panel"]').forEach(b=>b.setAttribute('aria-expanded',String(b===e.currentTarget)));(tools.querySelector('input:checked')||close).focus()}
+  function closePanel(returnFocus=true){panel.hidden=true;tools.querySelectorAll('[aria-controls="a11y-panel"]').forEach(b=>b.setAttribute('aria-expanded','false'));if(returnFocus)(mobileMenu.hidden?desktop:mobile).focus()}
+  more.addEventListener('click',()=>mobileMenu.hidden?revealLauncher():hideLauncher());
+  tools.querySelectorAll('[data-size]').forEach(b=>b.addEventListener('click',()=>{prefs.textSize=b.dataset.size;save();apply()}));
+  [dark,mobileDark].forEach(b=>b.addEventListener('click',()=>{prefs.darkMode=!prefs.darkMode;save();apply()}));
+  desktop.addEventListener('click',openPanel);mobile.addEventListener('click',openPanel);close.addEventListener('click',()=>closePanel());
+  tools.querySelectorAll('[name="a11y-text-size"]').forEach(x=>x.addEventListener('change',()=>{prefs.textSize=x.value;save();apply()}));
+  [['contrast','contrast'],['motion','motion'],['underline','underline']].forEach(([name,key])=>tools.querySelector(`[name="${name}"]`).addEventListener('change',e=>{prefs[key]=e.target.checked;save();apply()}));
+  tools.querySelector('.a11y-reset').addEventListener('click',()=>{prefs={...defaults};localStorage.removeItem(KEY);apply()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&panel.hidden&&!mobileMenu.hidden){hideLauncher();more.focus();return}if(panel.hidden)return;if(e.key==='Escape'){closePanel();return}if(e.key==='Tab'){const focusable=[...panel.querySelectorAll('button,input')].filter(x=>!x.disabled);if(e.shiftKey&&document.activeElement===focusable[0]){e.preventDefault();focusable.at(-1).focus()}else if(!e.shiftKey&&document.activeElement===focusable.at(-1)){e.preventDefault();focusable[0].focus()}}});
+  document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!tools.contains(e.target))closePanel(false);if(!mobileMenu.hidden&&!tools.contains(e.target))hideLauncher()});
+  apply();
+})();
