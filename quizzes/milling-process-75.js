@@ -3,15 +3,19 @@
   const d=window.QUIZ_DATA;
   if(!d?.sections)return;
   const source=d.sections.flatMap(s=>s.items), terms=source.filter(q=>q.type==='identification').map(q=>q.answerText);
+  const mcqFacts=source.filter(q=>q.type==='mcq');
+  let tfIndex=0;
   let all=source.map((q,i)=>{
-    if(q.type==='mcq')return {...q,section:'Multiple Choice'};
+    if(q.type==='mcq')return {...q,question:`Identify the milling operation, product, or concept described: ${q.explanation}`,section:'Identification · lecture clue'};
     if(q.type==='identification'){
       const choices=[q.answerText,...new Set(terms.filter(t=>t!==q.answerText))].slice(0,4);
       while(choices.length<4)choices.push(['Sieving','Aspiration','Conditioning'][choices.length-1]);
       return {type:'mcq',question:q.question,choices,answer:0,explanation:q.explanation,source:q.source,section:'Identify the milling concept'};
     }
-    const truth=q.answer===true;
-    return {type:'mcq',question:`Modified true/false: ${q.question}`,choices:['The statement accurately describes the lecture.','The statement reverses the process described in the lecture.','The statement assigns the process to a different milling stage.','The statement contradicts the lecture.'],answer:truth?0:3,explanation:q.explanation,source:q.source,section:'Analyze the statement'};
+    const truth=q.choices?.[q.answer]==='True'||q.answer===true, fact=mcqFacts[tfIndex%mcqFacts.length], secondTruth=[true,false,true,false][tfIndex%4];
+    const shownAnswer=secondTruth?fact.choices[fact.answer]:fact.choices.find((_,j)=>j!==fact.answer);
+    const answer=truth?(secondTruth?2:0):(secondTruth?1:3);tfIndex++;
+    return {type:'mcq',question:`Statement 1: ${q.question}\nStatement 2: The lecture's answer to “${fact.question}” is “${shownAnswer}.”\nWhich combination is correct?`,choices:['Only Statement 1 is true.','Only Statement 2 is true.','Both statements are true.','Both statements are false.'],answer,explanation:`Statement 1 is ${truth?'true':'false'}: ${q.explanation} Statement 2 is ${secondTruth?'true':'false'}: ${fact.explanation}`,source:`${q.source}; ${fact.source}`,section:'Two-statement analysis'};
   });
   const extras=[
     ['What is the objective of rice milling?',['Remove hull, bran, and embryo while preserving the endosperm core','Remove only the hull while retaining all bran','Separate gluten from starch','Maximize breakage of the endosperm'],0,'Rice milling aims to remove hull, bran, and embryo as completely as possible without breaking the remaining endosperm core.','Slide 13'],
@@ -25,7 +29,17 @@
     ['What does flour extraction express?',['The basis or reference point used to calculate flour yield','The amount of gluten retained after baking','The percentage of water used for conditioning only','The color grade of flour'],0,'The slide lists several possible bases, including wheat received, cleaned wheat, conditioned wheat, or total products.','Slide 34'],
     ['Which grain milling process is described as neither strictly dry nor strictly wet?',['Rice solvent extraction milling','Martin wheat milling','Maize wet milling','Barley pearling'],0,'Rice solvent extraction milling has stages associated with both categories, so it is not strictly dry or wet.','Slide 62']
   ].map(([question,choices,answer,explanation,source])=>({type:'mcq',question,choices,answer,explanation,source,section:'Apply and compare'}));
+  const analogies=[
+    ['Sieving : size-based separation :: air separation : ____',['Density-based separation by air current','Removal of saponins with water','Frictional polishing','Gluten agglomeration'],0,'Sieving separates by size; air separation uses an air current to carry lower-density particles more readily.','Slide 11'],
+    ['Martin process : dough kneaded under water sprays :: batter process : ____',['Flour-water batter dispersed in excess water','Wheat tempered between rollers','Rice polished to remove aleurone','Bran detached by dry sieving'],0,'The batter process disperses flour-water batter in excess water, then separates gluten curds from starch milk.','Slide 59'],
+    ['Semolina : coarse durum grind for pasta :: farina : ____',['Purified endosperm particle used in breakfast cereals','All ground fractions of cleaned grain','Bran-rich flour with undefined proportions','Rice bran extracted for oil'],0,'Farina is a coarser purified endosperm particle often used in breakfast cereals.','Slide 29'],
+    ['Whitening : friction removes outer bran layers :: polishing : ____',['Removes remaining inner layers, including aleurone','Separates grain by specific gravity','Converts starch to gluten','Adds water to form masa'],0,'Polishing removes remaining inner layers and can reduce oxidative rancidity by removing aleurone.','Slide 19'],
+    ['Wholegrain flour : all ground products of cleaned grain :: brown flour : ____',['White flour plus some bran and germ, proportions undefined','Only purified durum endosperm','Flour treated with chlorine for cake making','A flour-water batter before gluten curds form'],0,'The lecture describes brown flour as white flour with some bran and germ, without defined proportions.','Slides 37-38']
+  ];
+  analogies.forEach((a,i)=>Object.assign(extras[i],{question:a[0],choices:a[1],answer:a[2],explanation:a[3],source:a[4],section:'Complete the relationship'}));
+  extras.slice(5).forEach((q,i)=>q.section='Apply the lecture');
   all=all.concat(extras).slice(0,75);
+  all.forEach((q,i)=>{const shift=(i*3+1)%q.choices.length;q.choices=q.choices.slice(shift).concat(q.choices.slice(0,shift));q.answer=(q.answer-shift+q.choices.length)%q.choices.length});
   d.title='The Milling Process · 75 MCQ'; d.topic='Cereal Science and Technology';
   d.sections=[{id:'mcq',title:'Multiple Choice',type:'mcq',items:all}];
 })();
