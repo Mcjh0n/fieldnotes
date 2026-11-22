@@ -41,3 +41,4 @@ body{font-size:16px;-webkit-font-smoothing:auto}
 .quiz-brand{font-size:15px;letter-spacing:-.3px;white-space:nowrap}
 .quiz-brand .brand-mark{font-size:12px}
 @media(max-width:480px){.quiz-header{display:grid;grid-template-columns:1fr auto;row-gap:10px}.quiz-header .quiz-label{grid-column:1/-1;grid-row:2;text-align:left}.quiz-brand{font-size:14px}}
+.card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}.quiz-type{font-size:10px;line-height:1.35;color:#55715e;background:#eef4ed;border:1px solid #e0e9df;border-radius:999px;padding:4px 8px}
