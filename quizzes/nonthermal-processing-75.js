@@ -5,7 +5,7 @@
   const source=d.sections.flatMap(s=>s.items);
   const terms=source.filter(q=>q.type==='identification').map(q=>q.answerText);
   let all=source.map((q,i)=>{
-    if(q.type==='mcq')return {...q,section:'Multiple Choice'};
+    if(q.type==='mcq')return {...q,question:`Identify the technology, mechanism, or concept described: ${q.explanation}`,section:'Identification · lecture clue'};
     if(q.type==='identification'){
       const answer=q.answerText, distractors=[...new Set(terms.filter(t=>t!==answer))].slice(i%7,(i%7)+3);
       while(distractors.length<3)distractors.push(['Radio frequency','Pulsed light','Ohmic heating'][distractors.length]);
@@ -13,7 +13,7 @@
       return {type:'mcq',question:q.question,choices,answer:0,explanation:q.explanation,source:q.source,section:'Identify the concept'};
     }
     const truth=q.answer===true;
-    return {type:'mcq',question:`Modified true/false: ${q.question}`,choices:['The statement and its key detail are both accurate.','The statement is accurate, but its key detail is reversed.','The statement is inaccurate, but the key detail is accurate.','Both the statement and its key detail are inaccurate.'],answer:truth?0:3,explanation:q.explanation,source:q.source,section:'Analyze the statement'};
+    return {type:'mcq',question:`Statement 1: ${q.question} Statement 2: ${q.explanation} Which combination is correct?`,choices:['Statement 1 only is true.','Statement 2 only is true.','Both statements are true.','Both statements are false.'],answer:truth?2:1,explanation:q.explanation,source:q.source,section:'Two-statement analysis'};
   });
   const extras=[
     ['Which source describes industrial microwave frequencies most commonly used as 0.915 and 2.45 GHz?',['Microwave processing','Radio frequency processing','Ohmic heating','Pulsed electric fields'],0,'The lecture lists 0.915 and 2.45 GHz as common industrial microwave frequencies.','Slide 8'],
@@ -28,6 +28,7 @@
     ['Which factor is explicitly listed as affecting pulsed-light treatment outcome?',['Target microorganism or enzyme','Grain angle of repose','Dough glutenin content','Salt crystal size'],0,'The lecture lists sample properties, target microorganism or enzyme, and fluence-related parameters.','Slide 57']
   ].map(([question,choices,answer,explanation,source])=>({type:'mcq',question,choices,answer,explanation,source,section:'Apply and compare'}));
   all=all.concat(extras).slice(0,75);
+  all.forEach((q,i)=>{const shift=(i*3+1)%q.choices.length;q.choices=q.choices.slice(shift).concat(q.choices.slice(0,shift));q.answer=(q.answer-shift+q.choices.length)%q.choices.length});
   d.title='Nonthermal Processing · 75 MCQ';
   d.topic='Nonthermal Processing';
   d.sections=[{id:'mcq',title:'Multiple Choice',type:'mcq',items:all}];

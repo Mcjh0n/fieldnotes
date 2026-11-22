@@ -4,14 +4,14 @@
   if(!d?.sections)return;
   const source=d.sections.flatMap(s=>s.items), terms=source.filter(q=>q.type==='identification').map(q=>q.answerText);
   let all=source.map((q,i)=>{
-    if(q.type==='mcq')return {...q,section:'Multiple Choice'};
+    if(q.type==='mcq')return {...q,question:`Identify the milling operation, product, or concept described: ${q.explanation}`,section:'Identification · lecture clue'};
     if(q.type==='identification'){
       const choices=[q.answerText,...new Set(terms.filter(t=>t!==q.answerText))].slice(0,4);
       while(choices.length<4)choices.push(['Sieving','Aspiration','Conditioning'][choices.length-1]);
       return {type:'mcq',question:q.question,choices,answer:0,explanation:q.explanation,source:q.source,section:'Identify the milling concept'};
     }
     const truth=q.answer===true;
-    return {type:'mcq',question:`Modified true/false: ${q.question}`,choices:['The statement accurately describes the lecture.','The statement reverses the process described in the lecture.','The statement assigns the process to a different milling stage.','The statement contradicts the lecture.'],answer:truth?0:3,explanation:q.explanation,source:q.source,section:'Analyze the statement'};
+    return {type:'mcq',question:`Statement 1: ${q.question} Statement 2: ${q.explanation} Which combination is correct?`,choices:['Statement 1 only is true.','Statement 2 only is true.','Both statements are true.','Both statements are false.'],answer:truth?2:1,explanation:q.explanation,source:q.source,section:'Two-statement analysis'};
   });
   const extras=[
     ['What is the objective of rice milling?',['Remove hull, bran, and embryo while preserving the endosperm core','Remove only the hull while retaining all bran','Separate gluten from starch','Maximize breakage of the endosperm'],0,'Rice milling aims to remove hull, bran, and embryo as completely as possible without breaking the remaining endosperm core.','Slide 13'],
@@ -26,6 +26,7 @@
     ['Which grain milling process is described as neither strictly dry nor strictly wet?',['Rice solvent extraction milling','Martin wheat milling','Maize wet milling','Barley pearling'],0,'Rice solvent extraction milling has stages associated with both categories, so it is not strictly dry or wet.','Slide 62']
   ].map(([question,choices,answer,explanation,source])=>({type:'mcq',question,choices,answer,explanation,source,section:'Apply and compare'}));
   all=all.concat(extras).slice(0,75);
+  all.forEach((q,i)=>{const shift=(i*3+1)%q.choices.length;q.choices=q.choices.slice(shift).concat(q.choices.slice(0,shift));q.answer=(q.answer-shift+q.choices.length)%q.choices.length});
   d.title='The Milling Process · 75 MCQ'; d.topic='Cereal Science and Technology';
   d.sections=[{id:'mcq',title:'Multiple Choice',type:'mcq',items:all}];
 })();

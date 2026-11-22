@@ -27,10 +27,11 @@ const cerealFacts=[
 ];
 const qs=[];
 cerealFacts.forEach((f,i)=>{
-  qs.push({type:'mcq',question:f[0],choices:[f[1],...f[2]],answer:0,explanation:f[3],source:f[4],section:'Identify the product or step'});
+  qs.push({type:'mcq',question:`Identify the cereal product, process, or step described: ${f[3]}`,choices:[f[1],...f[2]],answer:0,explanation:f[3],source:f[4],section:'Identify the product or step'});
   const next=cerealFacts[(i+1)%cerealFacts.length],prior=cerealFacts[(i+cerealFacts.length-1)%cerealFacts.length];
   qs.push({type:'mcq',question:`A process yields this result: ${f[3]} Which process or product is being described?`,choices:[f[1],next[1],prior[1],cerealFacts[(i+9)%cerealFacts.length][1]],answer:0,explanation:f[3],source:f[4],section:'Apply the lecture'});
   const options=[f[1],cerealFacts[(i+5)%cerealFacts.length][1],cerealFacts[(i+11)%cerealFacts.length][1],cerealFacts[(i+17)%cerealFacts.length][1]];
-  qs.push({type:'mcq',question:`Which option best matches this lecture detail? ${f[3]}`,choices:options,answer:0,explanation:f[3],source:f[4],section:'Compare concepts'});
+  qs.push({type:'mcq',question:`Identify the term or product that matches this lecture clue: ${f[3]}`,choices:options,answer:0,explanation:f[3],source:f[4],section:'Identify from a clue'});
 });
+qs.forEach((q,i)=>{const shift=(i*3+1)%q.choices.length;q.choices=q.choices.slice(shift).concat(q.choices.slice(0,shift));q.answer=(q.answer-shift+q.choices.length)%q.choices.length});
 window.QUIZ_DATA={title:'Other Cereal Products · 75 MCQ',topic:'Cereal Science and Technology',sections:[{id:'mcq',title:'Multiple Choice',type:'mcq',items:qs}]};

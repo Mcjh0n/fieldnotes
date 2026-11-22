@@ -29,10 +29,11 @@ const pool=facts.map(f=>f[1]);
 const questions=[];
 facts.forEach((f,i)=>{
   const base=[f[1],f[2],f[3],f[4]];
-  questions.push({type:'mcq',question:f[0],choices:base,answer:0,explanation:f[5],source:f[6],section:'Identify the principle'});
+  questions.push({type:'mcq',question:`Identify the baking term or principle described: ${f[5]}`,choices:base,answer:0,explanation:f[5],source:f[6],section:'Identify the principle'});
   const next=facts[(i+1)%facts.length],prev=facts[(i+facts.length-1)%facts.length];
-  questions.push({type:'mcq',question:`A baker wants to address this situation: ${f[0].replace(/^What is |^Which |\?$/g,'').toLowerCase()}. Which lecture principle is most relevant?`,choices:[f[1],next[1],prev[1],facts[(i+7)%facts.length][1]],answer:0,explanation:f[5],source:f[6],section:'Apply the lecture'});
+  questions.push({type:'mcq',question:`A baker observes this result during preparation: ${f[5]} Which concept from the lecture best explains it?`,choices:[f[1],next[1],prev[1],facts[(i+7)%facts.length][1]],answer:0,explanation:f[5],source:f[6],section:'Apply the lecture'});
   const opts=[f[1],facts[(i+3)%facts.length][1],facts[(i+8)%facts.length][1],facts[(i+13)%facts.length][1]];
-  questions.push({type:'mcq',question:`Which statement best distinguishes ${f[1].toLowerCase()} from the other bread-making concepts?`,choices:opts,answer:0,explanation:f[5],source:f[6],section:'Compare concepts'});
+  questions.push({type:'mcq',question:`Which baking concept is identified by this clue? ${f[5]}`,choices:opts,answer:0,explanation:f[5],source:f[6],section:'Identify from a clue'});
 });
+questions.forEach((q,i)=>{const shift=(i*3+1)%q.choices.length;q.choices=q.choices.slice(shift).concat(q.choices.slice(0,shift));q.answer=(q.answer-shift+q.choices.length)%q.choices.length});
 window.QUIZ_DATA={title:'Principles of Baking · 75 MCQ',topic:'Cereal Science and Technology',sections:[{id:'mcq',title:'Multiple Choice',type:'mcq',items:questions} ]};
